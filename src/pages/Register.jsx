@@ -10,7 +10,7 @@ export default function Register() {
     email: "",
     password: ""
   });
-   
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,20 +24,20 @@ export default function Register() {
       console.log(res.data);
     } catch (err) {
       console.error(err.response?.data || err.message);
-      
+
       alert("Registered Successfully");
       navigate("/login");
     }
   };
-        const navigate=useNavigate()
+  const navigate = useNavigate()
 
-  const handleLogin=()=>{
+  const handleLogin = () => {
     navigate("/login")
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form 
+      <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md"
       >
@@ -79,7 +79,7 @@ export default function Register() {
         >
           Register
         </button>
-         <button  type="button" className="w-full text-green-500 bg-white mt-5 py-3  underline  hover:text-green-600" onClick={handleLogin}>
+        <button type="button" className="w-full text-green-500 bg-white mt-5 py-3  underline  hover:text-green-600" onClick={handleLogin}>
           Have an account?
         </button>
       </form>

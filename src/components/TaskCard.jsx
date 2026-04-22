@@ -29,11 +29,10 @@ const TaskCard = ({ task, onToggleStatus, onDelete }) => {
 
         {/* Status Badge */}
         <span
-          className={`text-xs px-3 py-1 rounded-full font-medium ${
-            task.status === "done"
+          className={`text-xs px-3 py-1 rounded-full font-medium ${task.status === "done"
               ? "bg-green-100 text-green-700"
               : "bg-yellow-100 text-yellow-700"
-          }`}
+            }`}
         >
           {task.status}
         </span>
@@ -51,17 +50,16 @@ const TaskCard = ({ task, onToggleStatus, onDelete }) => {
         <button
           onClick={handleToggle}
           disabled={loading}
-          className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
-            task.status === "done"
+          className={`px-4 py-2 text-sm rounded-lg font-medium transition ${task.status === "done"
               ? "bg-gray-200 text-gray-600 hover:bg-gray-300"
               : "bg-green-500 text-white hover:bg-green-600"
-          } ${loading && "opacity-50 cursor-not-allowed"}`}
+            } ${loading && "opacity-50 cursor-not-allowed"}`}
         >
           {loading
             ? "Updating..."
             : task.status === "done"
-            ? "Mark as Pending"
-            : "Mark as Done"}
+              ? "Mark as Pending"
+              : "Mark as Done"}
         </button>
 
         {/* Delete */}

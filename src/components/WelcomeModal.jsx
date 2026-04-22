@@ -6,7 +6,7 @@ const WelcomeModal = ({ user, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-orange-100 bg-opacity-50 flex justify-center items-center z-50">
-      
+
       <div className="bg-red-50 rounded-full shadow-lg p-6 w-150 h-100 flex items-center gap-6 animate-scaleIn">
 
         {/* LEFT - Image */}
@@ -21,7 +21,7 @@ const WelcomeModal = ({ user, onClose }) => {
         {/* RIGHT - Content */}
         <div className="w-1/2 text-left">
           <h2 className="text-2xl font-bold text-gray-800">
-            Welcome,    {user?.name} 
+            Welcome,    {user?.name}
           </h2>
 
           <p className="text-gray-600 mt-2 pt-4 pl-2">

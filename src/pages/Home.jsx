@@ -5,7 +5,7 @@ import { Link } from "react-router";
 const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
-    
+
 
       {/* Hero Section */}
       <section className="text-center bg-white py-20 px-6">
@@ -20,12 +20,12 @@ const Home = () => {
         </p>
 
         <div className="flex justify-center gap-4">
-           <Link
-                     to="/login"
-                     className="px-4 py-2 text-green-700 border border-green-500 rounded-lg hover:bg-green-50"
-                   >
-                     Login
-                   </Link>
+          <Link
+            to="/login"
+            className="px-4 py-2 text-green-700 border border-green-500 rounded-lg hover:bg-green-50"
+          >
+            Login
+          </Link>
           <Link
             to="/register"
             className="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
@@ -42,7 +42,7 @@ const Home = () => {
         </h2>
 
         <div className="grid gap-8 md:grid-cols-3">
-          
+
           <div className="bg-gray-50 p-6 rounded-xl shadow-sm text-center">
             <h3 className="text-xl font-semibold mb-2">Task Management</h3>
             <p className="text-gray-600 text-sm">
@@ -67,8 +67,8 @@ const Home = () => {
         </div>
       </section>
 
-     
-      
+
+
     </div>
   );
 };

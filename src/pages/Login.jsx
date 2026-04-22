@@ -18,7 +18,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await API.post("auth/login", form);
-      console.log(`res.data `,res.data)
+      console.log(`res.data `, res.data)
 
       // Save token
       localStorage.setItem("user", JSON.stringify(res.data));
@@ -32,7 +32,7 @@ export default function Login() {
 
   };
 
-  const handleRegister=()=>{
+  const handleRegister = () => {
     navigate("/register")
   }
 
@@ -68,7 +68,7 @@ export default function Login() {
         <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-blue-600">
           Login
         </button>
-        <button  type="button" className="w-full underline text-blue-500 bg-white mt-5 py-3 rounded-lg hover:bg-blue-600" onClick={handleRegister}>
+        <button type="button" className="w-full underline text-blue-500 bg-white mt-5 py-3 rounded-lg hover:bg-blue-600" onClick={handleRegister}>
           NewUser?
         </button>
       </form>

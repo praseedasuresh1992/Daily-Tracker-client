@@ -54,7 +54,7 @@ const TaskCard = ({ task, onToggleStatus, onDelete }) => {
           className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
             task.status === "done"
               ? "bg-gray-200 text-gray-600 hover:bg-gray-300"
-              : "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-green-500 text-white hover:bg-green-600"
           } ${loading && "opacity-50 cursor-not-allowed"}`}
         >
           {loading

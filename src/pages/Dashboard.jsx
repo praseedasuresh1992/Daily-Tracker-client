@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { getTasks, createTask } from "../services/taskService";
 import TaskCard from "../components/TaskCard";
 import Loader from "../components/Loader";
-  import API from "../utils/api";
+import API from "../utils/api";
+import WelcomeModal from "../components/WelcomeModal";
+import { useNavigate } from "react-router";
 
 
 const Dashboard = () => {
@@ -11,7 +13,12 @@ const Dashboard = () => {
   const [title, setTitle] = useState("");
   const [description,setDescription]=useState("");
   const [btnLoading, setBtnLoading] = useState(false);
+  const [showModal, setShowModal] = useState(true);
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const navigate = useNavigate();
+   
   // Fetch tasks
   const fetchTasks = async () => {
     try {
@@ -67,16 +74,51 @@ const handleUpdate = async (id) => {
     console.log(err);
   }
 };
+// delete task 
+const handleDelete = async (id) => {
+  try {
+    await API.delete(`tasks/${id}`);
+
+    setTasks((prev) =>
+      prev.filter((task) => task._id !== id)
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   // Loader (page load)
   if (loading) return <Loader />;
 
+
+
+const handleLogout = () => {
+  localStorage.removeItem("user");   // remove user
+  localStorage.removeItem("token");  // (if you stored separately)
+
+  navigate("/login"); // redirect
+};
+
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="bg-orange-100 m-8 ml-5">
+    <div className="p-6 max-w-2xl mx-auto ">
+      {showModal && (
+  <WelcomeModal
+    user={user}
+    onClose={() => setShowModal(false)}
+  />
+)}
 
-      <h1 className="text-2xl font-bold mb-4">Daily Tracker</h1>
+    <div className="flex justify-between items-center mb-4">
+  <h1 className="text-2xl font-bold">Daily Tracker</h1>
 
-      {/* Add Task */}
+  <button
+    onClick={handleLogout}
+    className="text-red-500 px-4 py-2 hover:text-red-600"
+  >
+    Logout
+  </button>
+</div>
       <form onSubmit={handleAddTask} className="flex gap-2 mb-4">
         <input
           type="text"
@@ -96,7 +138,7 @@ const handleUpdate = async (id) => {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-black text-white px-4 py-2 rounded"
           disabled={btnLoading}
         >
           {btnLoading ? "Adding..." : "Add"}
@@ -113,11 +155,13 @@ const handleUpdate = async (id) => {
               key={task._id}
               task={task}
               onToggleStatus={handleUpdate}
+               onDelete={handleDelete}
             />
           ))
         )}
       </div>
 
+    </div>
     </div>
   );
 };

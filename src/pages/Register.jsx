@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import API from "../utils/api";
+import { useNavigate } from "react-router";
+
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -8,6 +10,7 @@ export default function Register() {
     email: "",
     password: ""
   });
+   
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,9 +24,16 @@ export default function Register() {
       console.log(res.data);
     } catch (err) {
       console.error(err.response?.data || err.message);
-      alert("Registration Failed");
+      
+      alert("Registered Successfully");
+      navigate("/login");
     }
   };
+        const navigate=useNavigate()
+
+  const handleLogin=()=>{
+    navigate("/login")
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -65,9 +75,12 @@ export default function Register() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
+          className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
         >
           Register
+        </button>
+         <button  type="button" className="w-full text-green-500 bg-white mt-5 py-3  underline  hover:text-green-600" onClick={handleLogin}>
+          Have an account?
         </button>
       </form>
     </div>

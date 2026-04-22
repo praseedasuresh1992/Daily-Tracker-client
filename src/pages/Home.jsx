@@ -1,18 +1,17 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router";
 
 const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
-      
-      {/* Navbar */}
-      <Navbar />
+    
 
       {/* Hero Section */}
-      <section className="text-center py-20 px-6">
+      <section className="text-center bg-white py-20 px-6">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
           Organize Your Day with{" "}
-          <span className="text-blue-500">DailyTracker</span>
+          <span className="text-green-800">DailyTracker</span>
         </h1>
 
         <p className="text-gray-600 max-w-xl mx-auto mb-8">
@@ -21,12 +20,18 @@ const Home = () => {
         </p>
 
         <div className="flex justify-center gap-4">
-          <button className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600">
-            Get Started
-          </button>
-          <button className="px-6 py-3 border border-blue-500 text-blue-500 rounded-xl hover:bg-blue-50">
-            Learn More
-          </button>
+           <Link
+                     to="/login"
+                     className="px-4 py-2 text-green-700 border border-green-500 rounded-lg hover:bg-green-50"
+                   >
+                     Login
+                   </Link>
+          <Link
+            to="/register"
+            className="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600"
+          >
+            Register
+          </Link>
         </div>
       </section>
 
@@ -62,23 +67,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-20 px-6 text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-          Start Managing Your Tasks Today
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Join now and boost your productivity 🚀
-        </p>
-        <button className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600">
-          Create Account
-        </button>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-gray-300 py-6 text-center">
-        <p>© {new Date().getFullYear()} DailyTracker. All rights reserved.</p>
-      </footer>
+     
+      
     </div>
   );
 };

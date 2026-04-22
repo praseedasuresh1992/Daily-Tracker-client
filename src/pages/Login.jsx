@@ -18,10 +18,10 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await API.post("auth/login", form);
+      console.log(`res.data `,res.data)
 
       // Save token
       localStorage.setItem("user", JSON.stringify(res.data));
-
 
       alert("Login successful");
       navigate("/dashboard");
@@ -29,7 +29,13 @@ export default function Login() {
       console.log(err)
       alert(err.response?.data?.message || "Error");
     }
+
   };
+
+  const handleRegister=()=>{
+    navigate("/register")
+  }
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -59,8 +65,11 @@ export default function Login() {
           required
         />
 
-        <button className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600">
+        <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-blue-600">
           Login
+        </button>
+        <button  type="button" className="w-full underline text-blue-500 bg-white mt-5 py-3 rounded-lg hover:bg-blue-600" onClick={handleRegister}>
+          NewUser?
         </button>
       </form>
     </div>

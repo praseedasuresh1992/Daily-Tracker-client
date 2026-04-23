@@ -1,5 +1,5 @@
 import React from "react";
-import welcomeImg from "../assets/welcomeimage.jpg"// 👈 your local image
+import welcomeImg from "../assets/welcomeimage.jpg"// 
 
 const WelcomeModal = ({ user, onClose }) => {
   if (!user) return null;

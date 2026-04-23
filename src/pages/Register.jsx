@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import API from "../utils/api";
 import { useNavigate } from "react-router";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 export default function Register() {
@@ -10,25 +11,35 @@ export default function Register() {
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+  const validatePassword = (password) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+  return regex.test(password);
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await API.post("/auth/register", form);
-      alert("Registered Successfully");
-      console.log(res.data);
-    } catch (err) {
-      console.error(err.response?.data || err.message);
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      alert("Registered Successfully");
-      navigate("/login");
-    }
-  };
+  if (!validatePassword(form.password)) {
+    setError("Password must be 6+ chars, include uppercase, lowercase and number");
+    return;
+  }
+
+  try {
+    const res = await API.post("/auth/register", form);
+    alert("Registered Successfully");
+    navigate("/login");
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    setError("Registration failed");
+  }
+};  
   const navigate = useNavigate()
 
   const handleLogin = () => {
@@ -62,17 +73,27 @@ export default function Register() {
           className="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
+<div className="relative mb-6">
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    placeholder="Password"
+    value={form.password}
+    onChange={handleChange}
+    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    required
+  />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full mb-6 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-
+ <span
+  onClick={() => setShowPassword(!showPassword)}
+  className="absolute right-3 top-3 cursor-pointer text-gray-600"
+>
+  {showPassword ? <FaEyeSlash /> : <FaEye />}
+</span>
+</div>
+{error && (
+  <p className="text-red-500 text-sm mb-3">{error}</p>
+)}
         <button
           type="submit"
           className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"

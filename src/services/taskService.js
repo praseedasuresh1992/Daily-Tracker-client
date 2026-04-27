@@ -6,6 +6,6 @@ export const getTasks = async () => {
 };
 
 export const createTask = async (data) => {
-  const res = await API.post("/tasks", data);
+  const res = await API.post("/createtask/", data);
   return res.data;
 };

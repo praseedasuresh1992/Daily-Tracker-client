@@ -101,8 +101,7 @@ const Dashboard = () => {
  return (
   <div className="flex min-h-screen bg-red-100">
 
-    {/* Sidebar */}
-    <Sidebar />
+  
 
     {/* Main Content */}
     <div className="flex-1 p-6">
@@ -115,22 +114,7 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-2xl font-bold italic">
-          Hello, {user?.name}{" "}
-          <span className="text-sm font-normal">
-            {user?.email}
-          </span>
-        </p>
-
-        <button
-          onClick={handleLogout}
-          className="text-red-500 hover:text-red-600"
-        >
-          Logout
-        </button>
-      </div>
+     
 
       {/* Task List */}
       <div className="space-y-2 pt-4">

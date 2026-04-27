@@ -11,6 +11,10 @@ export const getCategories = async () => {
   const res = await API.get("/categories");
   return res.data;
 };
+export const updateCategory = async (id, data) => {
+  const res = await API.put(`/categories/${id}`, data);
+  return res.data;
+};
 
 // Delete category
 export const deleteCategory = async (id) => {

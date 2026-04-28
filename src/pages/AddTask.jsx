@@ -59,8 +59,7 @@ const AddTask = () => {
       });
 
       alert("✅ Task added successfully");
-      navigate("/dashboard");
-
+      navigate("/dashboard", { state: { refresh: true } });
     } catch (err) {
       console.log(err);
       alert(err.response?.data?.message || "Error");

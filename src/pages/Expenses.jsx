@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
-import API from "../utils/api";
+import TaskCard from "../components/TaskCard";
+import {
+  getTasks,
+  updateTask,
+  deleteTask,
+} from "../services/taskService";
 
 const Expenses = ({ status }) => {
+  console.log (`status is ${status}`)
   const [expenses, setExpenses] = useState([]);
 
+  // Fetch
   const fetchExpenses = async () => {
     try {
-      let url = "/tasks";
-
-      // filter based on status
-      if (status === "pending") {
-        url += "?status=pending";
-      } else if (status === "done") {
-        url += "?status=done";
-      }
-
-      const res = await API.get(url);
-      setExpenses(res.data);
+      const data = await getTasks(status);
+      setExpenses(data);
     } catch (err) {
       console.log(err);
     }
@@ -25,6 +23,34 @@ const Expenses = ({ status }) => {
   useEffect(() => {
     fetchExpenses();
   }, [status]);
+
+  // Update
+  const handleUpdate = async (id) => {
+    try {
+      const updated = await updateTask(id);
+
+      setExpenses((prev) =>
+        prev.map((item) =>
+          item._id === id ? updated : item
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // Delete
+  const handleDelete = async (id) => {
+    try {
+      await deleteTask(id);
+
+      setExpenses((prev) =>
+        prev.filter((item) => item._id !== id)
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -39,13 +65,16 @@ const Expenses = ({ status }) => {
       {expenses.length === 0 ? (
         <p>No data</p>
       ) : (
-        expenses.map((item) => (
-          <div key={item._id} className="bg-white p-3 mb-2 shadow rounded">
-            <p>{item.title}</p>
-            <p>₹ {item.amount}</p>
-            <p className="text-sm text-gray-500">{item.status}</p>
-          </div>
-        ))
+        <div className="space-y-2 pt-4">
+          {expenses.map((expense) => (
+            <TaskCard
+              key={expense._id}
+              task={expense}
+              onToggleStatus={handleUpdate}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

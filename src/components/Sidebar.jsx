@@ -4,86 +4,75 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [openCategory, setOpenCategory] = useState(false);
-  const [openExpense, setOpenExpense] = useState(false);
+
+
+  const [open, setOpen] = useState({
+    category: false,
+    expense: false,
+  });
+
+  const toggle = (key) => {
+    setOpen((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const menuItem = (label, path) => (
+    <li
+      onClick={() => navigate(path)}
+      className="cursor-pointer hover:text-blue-500"
+    >
+      {label}
+    </li>
+  );
 
   return (
-   
     <div className="w-64 bg-red-200 shadow-md p-5 min-h-screen">
-
       <h2 className="text-xl font-bold mb-6">Menu</h2>
 
-      <ul className="space-y-3">
+      <ul className="space-y-4">
 
-        {/* CATEGORY DROPDOWN */}
+        {/* CATEGORY */}
         <li>
           <div
             className="flex justify-between items-center cursor-pointer font-semibold"
-            onClick={() => setOpenCategory(!openCategory)}
+            onClick={() => toggle("category")}
           >
             📁 Category
-            {openCategory ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            {open.category ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
           </div>
 
-          {openCategory && (
+          {open.category && (
             <ul className="ml-4 mt-2 space-y-2 text-gray-600">
-              <li className="cursor-pointer hover:text-blue-500"
-                onClick={() => navigate("/add-category")}>
-                ➕ Add Category
-              </li>
-              <li className="cursor-pointer hover:text-blue-500"
-                onClick={() => navigate("/categories")}
-              >
-                📄 View Categories
-              </li>
+              {menuItem("➕ Add Category", "/add-category")}
+              {menuItem("📄 View Categories", "/categories")}
             </ul>
           )}
         </li>
 
-        {/* EXPENSE DROPDOWN */}
+        {/* EXPENSE */}
         <li>
           <div
-            className="flex justify-between items-center cursor-pointer font-semibold mt-4"
-            onClick={() => setOpenExpense(!openExpense)}
+            className="flex justify-between items-center cursor-pointer font-semibold"
+            onClick={() => toggle("expense")}
           >
             💰 Expenses
-            {openExpense ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            {open.expense ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
           </div>
 
-          {openExpense && (
+          {open.expense && (
             <ul className="ml-4 mt-2 space-y-2 text-gray-600">
-              <li
-              onClick={() => navigate("/add-task")}
-              className="cursor-pointer hover:text-blue-500">
-                ➕ Add Expense
-              </li>
-              <li
-                onClick={() => navigate("/expenses")}
-                className="cursor-pointer hover:text-blue-500"
-              >
-                📄 All Expenses
-              </li>
-
-              <li
-                onClick={() => navigate("/expenses/history")}
-                className="cursor-pointer hover:text-blue-500"
-              >
-                🕘 History
-              </li>
-
-              <li
-                onClick={() => navigate("/expenses/pending")}
-                className="cursor-pointer hover:text-blue-500"
-              >
-                ⏳ Pending
-              </li>
+              {menuItem("➕ Add Expense", "/add-task")}
+              {menuItem("📄 All Expenses", "/expenses")}
+              {menuItem("🕘 History", "/expenses/history")}
+              {menuItem("⏳ Pending", "/expenses/pending")}
             </ul>
           )}
         </li>
 
       </ul>
     </div>
-  
   );
 };
 

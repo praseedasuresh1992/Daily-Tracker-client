@@ -18,23 +18,43 @@ const TaskCard = ({ task, onToggleStatus, onDelete }) => {
     setLoading(false);
   };
 
+  // 🔥 Format date
+  const formattedDate = task.taskDate
+    ? new Date(task.taskDate).toLocaleDateString()
+    : "No date";
+
   return (
     <div className="bg-white shadow-md rounded-2xl p-5 border hover:shadow-lg transition duration-300">
 
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-lg font-semibold text-dark font-bold">
           {task.title}
         </h2>
+         <span className="font-bold text-dark">
+           {task.amount|| "0"}
+        </span>
 
         {/* Status Badge */}
         <span
-          className={`text-xs px-3 py-1 rounded-full font-medium ${task.status === "done"
+          className={`text-xs px-3 py-1 rounded-full font-medium ${
+            task.status === "done"
               ? "bg-green-100 text-green-700"
               : "bg-yellow-100 text-yellow-700"
-            }`}
+          }`}
         >
           {task.status}
+        </span>
+      </div>
+
+      {/* 🔥 Category + Date */}
+      <div className="flex justify-between text-sm text-gray-500 mb-2">
+        <span>
+          📂 {task.category || "No category"}
+        </span>
+        
+        <span>
+          📅 {formattedDate}
         </span>
       </div>
 
@@ -50,16 +70,17 @@ const TaskCard = ({ task, onToggleStatus, onDelete }) => {
         <button
           onClick={handleToggle}
           disabled={loading}
-          className={`px-4 py-2 text-sm rounded-lg font-medium transition ${task.status === "done"
+          className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
+            task.status === "done"
               ? "bg-gray-200 text-gray-600 hover:bg-gray-300"
               : "bg-green-500 text-white hover:bg-green-600"
-            } ${loading && "opacity-50 cursor-not-allowed"}`}
+          } ${loading && "opacity-50 cursor-not-allowed"}`}
         >
           {loading
             ? "Updating..."
             : task.status === "done"
-              ? "Mark as Pending"
-              : "Mark as Done"}
+            ? "Mark as Pending"
+            : "Mark as Done"}
         </button>
 
         {/* Delete */}

@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="flex justify-between items-center">
 
         {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-green-900">
+        <Link  className="text-2xl font-bold text-green-900">
           DailyTracker
         </Link>
 

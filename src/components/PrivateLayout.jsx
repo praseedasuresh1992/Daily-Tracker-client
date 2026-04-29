@@ -62,7 +62,7 @@ const PrivateLayout = () => {
         {/* Main Content */}
         <div className="flex-1 p-6 bg-orange-100 min-h-screen">
 
-          {/* 🔥 Global Welcome Modal */}
+          {/*  Global Welcome Modal */}
           {showModal && user && (
             <WelcomeModal user={user} onClose={handleClose} />
           )}

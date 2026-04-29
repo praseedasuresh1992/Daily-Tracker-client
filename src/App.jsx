@@ -13,6 +13,7 @@ import PendingExpenses from "./pages/PendingExpenses";
 import ExpenseHistory from "./pages/ExpenseHistory";
 import AllExpenses from "./pages/AllExpenses";
 import AddTask from "./pages/AddTask";
+import ProfilePage from "./components/ProfilePage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/" element={<PrivateLayout />}>
 
               <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<ProfilePage />} />
               <Route path="add-category" element={<AddCategory />} />
               <Route path="categories" element={<ViewCategory />} />
               <Route path="/add-task" element={<AddTask />} />

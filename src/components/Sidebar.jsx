@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
@@ -32,6 +33,14 @@ const Sidebar = () => {
       <h2 className="text-xl font-bold mb-6">Menu</h2>
 
       <ul className="space-y-4">
+     <li>
+  <Link
+    to="/profile"
+    className="flex justify-between items-center cursor-pointer font-semibold hover:text-blue-500"
+  >
+    👤 Profile
+  </Link>
+</li>
 
         {/* CATEGORY */}
         <li>

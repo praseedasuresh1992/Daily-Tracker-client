@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -72,7 +73,12 @@ const PrivateLayout = () => {
             <p className="text-lg font-semibold">
               Hello, {user?.name}
             </p>
-
+             <Link
+                      to="/dashboard"
+                      className="text-green-800 font-bold  px-4 py-2 rounded-lg  hover:text-green-600 transition"
+                    >
+                      Home
+                    </Link>
             <button
               onClick={handleLogout}
               className="text-red-500"

@@ -10,10 +10,13 @@ import { getCategories } from "../services/categoryServices";
 const Expenses = ({ status }) => {
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
+  
 
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+const [sortOption, setSortOption] = useState("");
+const [showSortOptions, setShowSortOptions] = useState(false);
 
   const [selectedId, setSelectedId] = useState(null);
 
@@ -107,7 +110,22 @@ const Expenses = ({ status }) => {
 
     return matchesSearch && matchesDate && matchesCategory;
   });
+// -------sorting------------------- 
+  const sortedExpenses = [...filteredExpenses].sort((a, b) => {
+  if (sortOption === "newest") {
+    return new Date(b.taskDate) - new Date(a.taskDate);
+  }
 
+  if (sortOption === "oldest") {
+    return new Date(a.taskDate) - new Date(b.taskDate);
+  }
+
+  if (sortOption === "az") {
+    return a.title.localeCompare(b.title);
+  }
+
+  return 0;
+});
   return (
     <div>
       {/* 🔥 Title */}
@@ -167,12 +185,54 @@ const Expenses = ({ status }) => {
           </button>
         )}
       </div>
+      <div className="relative">
+  <button
+    onClick={() => setShowSortOptions(!showSortOptions)}
+    className="bg-gray-200 px-3 py-2 rounded"
+  >
+    Sort
+  </button>
+{/* Sorting  */}
+  {showSortOptions && (
+    <div className="absolute right-0 mt-2 bg-white border rounded shadow w-40 z-10">
+      <button
+        onClick={() => {
+          setSortOption("newest");
+          setShowSortOptions(false);
+        }}
+        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+      >
+        Newest Firstm 
+      </button>
+
+      <button
+        onClick={() => {
+          setSortOption("oldest");
+          setShowSortOptions(false);
+        }}
+        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+      >
+        Oldest First
+      </button>
+
+      <button
+        onClick={() => {
+          setSortOption("az");
+          setShowSortOptions(false);
+        }}
+        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+      >
+        A → Z
+      </button>
+    </div>
+  )}
+</div>
 
       {/* 🔥 LIST */}
       {filteredExpenses.length === 0 ? (
         <p>No matching expenses</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 mt-5 pt-5">
           {filteredExpenses.map((expense) => (
             <div key={expense._id}>
 
@@ -215,6 +275,7 @@ const Expenses = ({ status }) => {
           ))}
         </div>
       )}
+      
     </div>
   );
 };

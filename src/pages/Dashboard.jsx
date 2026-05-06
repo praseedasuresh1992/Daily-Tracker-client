@@ -16,8 +16,10 @@ const Dashboard = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-    const user = JSON.parse(localStorage.getItem("user"))
-    
+  const [showExportOptions, setShowExportOptions] = useState(false); // ✅ NEW
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,7 +39,7 @@ const Dashboard = () => {
     fetchTasks();
   }, [location.state]);
 
-  // 🔹 Set default date range = current month
+  // 🔹 Default date
   useEffect(() => {
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -46,10 +48,10 @@ const Dashboard = () => {
     setToDate(now.toISOString().split("T")[0]);
   }, []);
 
-  // 🔥 Combined filtering (date + status)
+  // 🔥 Filtering
   const filteredTasks = tasks.filter((task) => {
     const taskDate = new Date(task.taskDate);
-    // Date filter
+
     if (fromDate && toDate) {
       const start = new Date(fromDate);
       const end = new Date(toDate);
@@ -58,7 +60,6 @@ const Dashboard = () => {
       if (taskDate < start || taskDate > end) return false;
     }
 
-    // Status filter
     if (filterStatus !== "all" && task.status !== filterStatus) {
       return false;
     }
@@ -84,85 +85,87 @@ const Dashboard = () => {
 
   if (loading) return <Loader />;
 
-  // ------------download csv-----------
+  // ------------ CSV ------------
   const downloadCSV = () => {
-  if (filteredTasks.length === 0) {
-    alert("No data in selected range");
-    return;
-  }
-
-  const headers = ["Title", "Category", "Amount", "Status", "Date"];
-
-  const rows = filteredTasks.map((task) => [
-    task.title,
-    task.category,
-    task.amount,
-    task.status,
-    new Date(task.createdAt).toLocaleDateString(),
-  ]);
-
-  const csvContent =
-    "data:text/csv;charset=utf-8," +
-    [headers, ...rows].map((e) => e.join(",")).join("\n");
-
-  const link = document.createElement("a");
-  link.href = encodeURI(csvContent);
-  link.download = "filtered_task_report.csv";
-  link.click();
-};
-// --------------download pdf--------------------
-const downloadPDF = () => {
-  if (filteredTasks.length === 0) {
-    alert("No data in selected range");
-    return;
-  }
-
-  const doc = new jsPDF();
-
-  doc.text("Filtered Task Report", 14, 10);
-
-  const tableData = filteredTasks.map((task) => [
-    task.title,
-    task.category,
-    task.amount,
-    task.status,
-    new Date(task.createdAt).toLocaleDateString(),
-  ]);
-
-  autoTable(doc, {
-    head: [["Title", "Category", "Amount", "Status", "Date"]],
-    body: tableData,
-  });
-
-  doc.save("filtered_task_report.pdf");
-};
-// -----------export email-------------------
-const sendEmail = async () => {
-  try {
     if (filteredTasks.length === 0) {
-      alert("No data to send");
+      alert("No data in selected range");
       return;
     }
 
-    const res = await API.post("/send-report", {
-      tasks: filteredTasks,
-      email: user.email,
+    const headers = ["Title", "Category", "Amount", "Status", "Date"];
+
+    const rows = filteredTasks.map((task) => [
+      task.title,
+      task.category,
+      task.amount,
+      task.status,
+      new Date(task.createdAt).toLocaleDateString(),
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+    const link = document.createElement("a");
+    link.href = encodeURI(csvContent);
+    link.download = "filtered_task_report.csv";
+    link.click();
+  };
+
+  // ------------ PDF ------------
+  const downloadPDF = () => {
+    if (filteredTasks.length === 0) {
+      alert("No data in selected range");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    doc.text("Filtered Task Report", 14, 10);
+
+    const tableData = filteredTasks.map((task) => [
+      task.title,
+      task.category,
+      task.amount,
+      task.status,
+      new Date(task.createdAt).toLocaleDateString(),
+    ]);
+
+    autoTable(doc, {
+      head: [["Title", "Category", "Amount", "Status", "Date"]],
+      body: tableData,
     });
 
-    alert(res.data.message);
-  } catch (err) {
-    console.log(err);
-    alert("Failed to send email");
-  }
-};
+    doc.save("filtered_task_report.pdf");
+  };
+
+  // ------------ Email ------------
+  const sendEmail = async () => {
+    try {
+      if (filteredTasks.length === 0) {
+        alert("No data to send");
+        return;
+      }
+
+      const res = await API.post("/send-report", {
+        tasks: filteredTasks,
+        email: user.email,
+      });
+
+      alert(res.data.message);
+    } catch (err) {
+      console.log(err);
+      alert("Failed to send email");
+    }
+  };
 
   return (
     <div className="space-y-6">
 
       {/* 🔹 Filters */}
-      <div className="flex flex-wrap gap-3 items-center">
+      <div className="flex flex-wrap gap-3 items-center relative">
 
-        {/* Date range */}
+        {/* Date */}
         <input
           type="date"
           value={fromDate}
@@ -177,7 +180,9 @@ const sendEmail = async () => {
           className="border px-3 py-2 rounded"
         />
 
-        {/* Status buttons */}
+    
+
+        {/* Status */}
         <div className="flex gap-2">
           {["all", "done", "pending"].map((status) => (
             <button
@@ -193,17 +198,59 @@ const sendEmail = async () => {
             </button>
           ))}
         </div>
-        
+            {/* ✅ EXPORT BUTTON */}
+        <div className="relative">
+          <button
+            onClick={() => setShowExportOptions(!showExportOptions)}
+            className="bg-gray-800 text-white px-4 py-2 rounded"
+          >
+            Export
+          </button>
+
+          {showExportOptions && (
+            <div className="absolute top-12 left-0 bg-white border rounded shadow-md w-40 z-10">
+              <button
+                onClick={() => {
+                  downloadCSV();
+                  setShowExportOptions(false);
+                }}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Download CSV
+              </button>
+
+              <button
+                onClick={() => {
+                  downloadPDF();
+                  setShowExportOptions(false);
+                }}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Download PDF
+              </button>
+
+              <button
+                onClick={() => {
+                  sendEmail();
+                  setShowExportOptions(false);
+                }}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Send Email
+              </button>
+            </div>
+          )}
+        </div>
+
         <button
           onClick={() => navigate("/add-task")}
-          className="bg-black text-white px-6 py-3 rounded-full h-fit mx-auto"
+          className="bg-black text-white px-6 py-3 rounded-full h-fit ml-auto"
         >
           + Add Task
         </button>
       </div>
-      
 
-      {/* 🔹 Summary Cards */}
+      {/* 🔹 Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SummaryCard title="Total Tasks" value={filteredTasks.length} />
 
@@ -218,26 +265,10 @@ const sendEmail = async () => {
         <SummaryCard title="Categories" value={categoryData.length} />
       </div>
 
-      {/* 🔹 Chart + Action */}
+      {/* 🔹 Chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-
         <CategoryPieChart data={categoryData} />
-
-
       </div>
-      <div className="flex gap-3">
-  <button onClick={downloadCSV} className="bg-gray-200 px-4 py-2 rounded">
-    CSV
-  </button>
-
-  <button onClick={downloadPDF} className="bg-gray-200 px-4 py-2 rounded">
-    PDF
-  </button>
-
-  <button onClick={sendEmail} className="bg-gray-200 px-4 py-2 rounded">
-    Email
-  </button>
-</div>
     </div>
   );
 };

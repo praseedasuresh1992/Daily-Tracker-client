@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import API from "../utils/api";
 
 const Sidebar = () => {
   const navigate = useNavigate();
 
+  // Get user
+  const user = JSON.parse(localStorage.getItem("user"));
 
+  //  Build image URL using axios baseURL
+  const baseURL = API.defaults.baseURL.replace("/api", "");
+
+  const profileUrl = user?.profile
+    ? `${baseURL}/uploads/${user.profile}`
+    : null;
+console.log(`Image ${profileUrl}`);
   const [open, setOpen] = useState({
     category: false,
     expense: false,
@@ -29,18 +38,39 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="w-64 bg-red-200 shadow-md p-5 min-h-screen">
-      <h2 className="text-xl font-bold mb-6">Menu</h2>
+    <div className="w-64 bg-white shadow-md p-5 min-h-screen border-r">
 
+      {/* 🔥 PROFILE SECTION */}
+      <div className="flex flex-col items-center mb-6">
+
+        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200 shadow">
+          {profileUrl ? (
+            <img
+              src={profileUrl}
+              alt="profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-300 text-xl">
+              👤
+            </div>
+          )}
+        </div>
+
+      
+      </div>
+
+      {/* 🔥 MENU */}
       <ul className="space-y-4">
-     <li>
-  <Link
-    to="/profile"
-    className="flex justify-between items-center cursor-pointer font-semibold hover:text-blue-500"
-  >
-    👤 Profile
-  </Link>
-</li>
+
+        <li>
+          <Link
+            to="/profile"
+            className="flex justify-between items-center cursor-pointer font-semibold hover:text-blue-500"
+          >
+            👤 Profile
+          </Link>
+        </li>
 
         {/* CATEGORY */}
         <li>

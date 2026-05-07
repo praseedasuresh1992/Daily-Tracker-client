@@ -233,7 +233,7 @@ const [showSortOptions, setShowSortOptions] = useState(false);
         <p>No matching expenses</p>
       ) : (
         <div className="space-y-3 mt-5 pt-5">
-          {filteredExpenses.map((expense) => (
+          {sortedExpenses.map((expense) => (
             <div key={expense._id}>
 
               {/* Full Card */}

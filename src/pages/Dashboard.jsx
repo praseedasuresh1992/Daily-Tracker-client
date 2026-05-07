@@ -160,117 +160,147 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+  <div className="space-y-6">
 
-      {/* 🔹 Filters */}
-      <div className="flex flex-wrap gap-3 items-center relative">
+    {/* 🔥 FILTER BAR (Sticky + Card Style) */}
+    <div className="sticky top-0 z-20 bg-gray-50 pb-2">
 
-        {/* Date */}
-        <input
-          type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-          className="border px-3 py-2 rounded"
-        />
+      <div className="bg-white p-4 rounded-2xl shadow-sm border flex flex-col gap-4">
 
-        <input
-          type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          className="border px-3 py-2 rounded"
-        />
+        {/* 🔹 Row 1: Date */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="border px-3 py-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-black/20"
+          />
 
-    
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="border px-3 py-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-black/20"
+          />
+        </div>
 
-        {/* Status */}
-        <div className="flex gap-2">
+        {/* 🔹 Row 2: Status */}
+        <div className="flex flex-wrap gap-2">
           {["all", "done", "pending"].map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 rounded-full border ${
+              className={`px-4 py-2 rounded-full text-sm border transition ${
                 filterStatus === status
                   ? "bg-black text-white"
-                  : "bg-white text-black"
+                  : "bg-gray-100 hover:bg-gray-200"
               }`}
             >
               {status.toUpperCase()}
             </button>
           ))}
         </div>
-            {/* ✅ EXPORT BUTTON */}
-        <div className="relative">
+
+        {/* 🔹 Row 3: Actions */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center">
+
+          {/* Export */}
+          <div className="relative w-full sm:w-auto">
+            <button
+              onClick={() => setShowExportOptions(!showExportOptions)}
+              className="w-full sm:w-auto font-bold  text-Green-900 px-5 py-2 rounded-lg hover:opacity-90 transition"
+            >
+              ⬇ Dowload Report
+            </button>
+
+            {showExportOptions && (
+              <div className="absolute mt-2 w-full sm:w-44 bg-white border rounded-xl shadow-lg overflow-hidden">
+                <button
+                  onClick={() => {
+                    downloadCSV();
+                    setShowExportOptions(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  📄 CSV
+                </button>
+
+                <button
+                  onClick={() => {
+                    downloadPDF();
+                    setShowExportOptions(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  📊 PDF
+                </button>
+
+                <button
+                  onClick={() => {
+                    sendEmail();
+                    setShowExportOptions(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  ✉ Email
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Add Task */}
           <button
-            onClick={() => setShowExportOptions(!showExportOptions)}
-            className="bg-gray-800 text-white px-4 py-2 rounded"
+            onClick={() => navigate("/add-task")}
+            className="w-full sm:w-auto bg-gradient-to-r from-black to-gray-700 text-white px-6 py-2 rounded-lg shadow hover:opacity-90 transition"
           >
-            Export
+            + Add Task
           </button>
-
-          {showExportOptions && (
-            <div className="absolute top-12 left-0 bg-white border rounded shadow-md w-40 z-10">
-              <button
-                onClick={() => {
-                  downloadCSV();
-                  setShowExportOptions(false);
-                }}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Download CSV
-              </button>
-
-              <button
-                onClick={() => {
-                  downloadPDF();
-                  setShowExportOptions(false);
-                }}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Download PDF
-              </button>
-
-              <button
-                onClick={() => {
-                  sendEmail();
-                  setShowExportOptions(false);
-                }}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Send Email
-              </button>
-            </div>
-          )}
         </div>
+      </div>
+    </div>
 
-        <button
-          onClick={() => navigate("/add-task")}
-          className="bg-black text-white px-6 py-3 rounded-full h-fit ml-auto"
-        >
-          + Add Task
-        </button>
+    {/* 🔥 SUMMARY CARDS */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div className="bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition">
+        <p className="text-gray-500 text-sm">Total Tasks</p>
+        <h2 className="text-2xl font-bold mt-1">
+          {filteredTasks.length}
+        </h2>
       </div>
 
-      {/* 🔹 Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SummaryCard title="Total Tasks" value={filteredTasks.length} />
-
-        <SummaryCard
-          title="Total Amount"
-          value={`₹${filteredTasks.reduce(
+      <div className="bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition">
+        <p className="text-gray-500 text-sm">Total Amount</p>
+        <h2 className="text-2xl font-bold mt-1">
+          ₹{filteredTasks.reduce(
             (a, t) => a + Number(t.amount || 0),
             0
-          )}`}
-        />
-
-        <SummaryCard title="Categories" value={categoryData.length} />
+          )}
+        </h2>
       </div>
 
-      {/* 🔹 Chart */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+      <div className="bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition">
+        <p className="text-gray-500 text-sm">Categories</p>
+        <h2 className="text-2xl font-bold mt-1">
+          {categoryData.length}
+        </h2>
+      </div>
+    </div>
+
+    {/* 🔥 CHART */}
+    <div className="bg-white p-4 rounded-2xl shadow-sm border">
+
+      <h3 className="text-lg font-semibold mb-4">
+        Category Breakdown
+      </h3>
+
+      <div className="w-full h-[300px] flex items-center justify-center">
         <CategoryPieChart data={categoryData} />
       </div>
     </div>
-  );
+
+  </div>
+);
 };
 
 export default Dashboard;

@@ -56,7 +56,11 @@ export default function Register() {
       });
 
       alert("Registered Successfully");
-      navigate("/login");
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("token", res.data.token);
+
+      navigate("/dashboard");
+
 
     } catch (err) {
       console.error(err.response?.data || err.message);

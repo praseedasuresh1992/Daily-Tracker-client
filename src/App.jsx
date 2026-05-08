@@ -13,7 +13,7 @@ import PendingExpenses from "./pages/PendingExpenses";
 import ExpenseHistory from "./pages/ExpenseHistory";
 import AllExpenses from "./pages/AllExpenses";
 import AddTask from "./pages/AddTask";
-import ProfilePage from "./components/ProfilePage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (

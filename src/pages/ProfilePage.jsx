@@ -5,6 +5,7 @@ import API from "../utils/api"; // your axios instance
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+ const [changePassword, setChangePassword] = useState(false);
 
   const [user, setUser] = useState({
     name: "",
@@ -51,24 +52,41 @@ const ProfilePage = () => {
       [e.target.name]: e.target.value,
     });
   };
+  const handlePasswordChange = (e) => {
+  setPasswordData({
+    ...passwordData,
+    [e.target.name]: e.target.value,
+  });
+};
 
   // 🔹 Save (Update API)
-  const handleSave = async () => {
-    try {
-      const res = await API.put("/auth/profile", formData, {
+const handleSave = async () => {
+  try {
+    const res = await API.put(
+      "/auth/profile",
+      { ...formData, ...passwordData },
+      {
         headers: { Authorization: token },
-      });
+      }
+    );
 
-      setUser(res.data);
-      setIsEditing(false);
+    setUser(res.data);
+    setIsEditing(false);
 
-      // optional: update localStorage
-      localStorage.setItem("user", JSON.stringify(res.data));
+    localStorage.setItem("user", JSON.stringify(res.data));
 
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    // clear password fields
+    setPasswordData({
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+  } catch (error) {
+    console.error(error.response?.data?.message);
+    alert(error.response?.data?.message);
+  }
+};
 
   // 🔹 Delete Account
   const handleDelete = async () => {
@@ -76,7 +94,7 @@ const ProfilePage = () => {
 
     try {
       await API.delete("/auth/profile", {
-        headers: { Authorization: token },
+       headers: { Authorization: `Bearer ${token}` },
       });
 
       localStorage.clear();
@@ -104,7 +122,7 @@ const ProfilePage = () => {
           <button
             onClick={handleEdit}
             className="flex items-center gap-2 bg-blue-500 text-white px-3 py-1 rounded-lg"
-          >
+          > 
             <Pencil size={16} /> Edit
           </button>
         ) : (
@@ -159,6 +177,44 @@ const ProfilePage = () => {
             <p className="text-gray-800 font-medium">{user.email}</p>
           )}
         </div>
+       <button
+  onClick={() => setChangePassword(!changePassword)}
+  className="text-blue-500"
+>
+  Change Password
+</button>
+{changePassword && (
+  <div className="space-y-3 mt-4">
+
+    <input
+      type="password"
+      name="oldPassword"
+      placeholder="Old Password"
+      value={passwordData.oldPassword}
+      onChange={handlePasswordChange}
+      className="w-full border rounded-lg p-2"
+    />
+
+    <input
+      type="password"
+      name="newPassword"
+      placeholder="New Password"
+      value={passwordData.newPassword}
+      onChange={handlePasswordChange}
+      className="w-full border rounded-lg p-2"
+    />
+
+    <input
+      type="password"
+      name="confirmPassword"
+      placeholder="Confirm Password"
+      value={passwordData.confirmPassword}
+      onChange={handlePasswordChange}
+      className="w-full border rounded-lg p-2"
+    />
+
+  </div>
+)}
 
       </div>
 

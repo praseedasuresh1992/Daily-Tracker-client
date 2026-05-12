@@ -7,6 +7,12 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
  const [changePassword, setChangePassword] = useState(false);
 
+ const [passwordData, setPasswordData] = useState({
+  oldPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+});
+
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -21,7 +27,7 @@ const ProfilePage = () => {
     const fetchUser = async () => {
       try {
         const res = await API.get("/auth/profile", {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         setUser(res.data);
@@ -43,9 +49,16 @@ const ProfilePage = () => {
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
-  };
+  setIsEditing(false);
 
+  setPasswordData({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  setChangePassword(false);
+};
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -66,7 +79,7 @@ const handleSave = async () => {
       "/auth/profile",
       { ...formData, ...passwordData },
       {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 

@@ -1,17 +1,23 @@
 import { useState, useEffect } from "react";
-import { User, Pencil, Save, X } from "lucide-react";
+import { User, Pencil, Save, X, Eye, EyeOff } from "lucide-react";
 import API from "../utils/api"; // your axios instance
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
- const [changePassword, setChangePassword] = useState(false);
+  const [changePassword, setChangePassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordVerified, setPasswordVerified] = useState(false);
 
- const [passwordData, setPasswordData] = useState({
-  oldPassword: "",
-  newPassword: "",
-  confirmPassword: "",
-});
+  const [showPassword, setShowPassword] = useState({
+    oldPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
 
   const [user, setUser] = useState({
     name: "",
@@ -49,16 +55,16 @@ const ProfilePage = () => {
   };
 
   const handleCancel = () => {
-  setIsEditing(false);
+    setIsEditing(false);
 
-  setPasswordData({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+    setPasswordData({
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
 
-  setChangePassword(false);
-};
+    setChangePassword(false);
+  };
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -66,40 +72,64 @@ const ProfilePage = () => {
     });
   };
   const handlePasswordChange = (e) => {
-  setPasswordData({
-    ...passwordData,
-    [e.target.name]: e.target.value,
-  });
-};
+    setPasswordData({
+      ...passwordData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const verifyOldPassword = async () => {
+    try {
+      const res = await API.post(
+        "/auth/verify-password",
+        {
+          oldPassword: passwordData.oldPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.success) {
+        setPasswordVerified(true);
+      }
+    } catch (error) {
+      setPasswordVerified(false);
+      alert("Previous password is incorrect");
+    }
+  };
 
   // 🔹 Save (Update API)
-const handleSave = async () => {
-  try {
-    const res = await API.put(
-      "/auth/profile",
-      { ...formData, ...passwordData },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+  const handleSave = async () => {
+    try {
+      const res = await API.put(
+        "/auth/profile",
+        { ...formData, ...passwordData },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
 
-    setUser(res.data);
-    setIsEditing(false);
+      );
 
-    localStorage.setItem("user", JSON.stringify(res.data));
+      setUser(res.data);
+      setIsEditing(false);
 
-    // clear password fields
-    setPasswordData({
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+      localStorage.setItem("user", JSON.stringify(res.data));
 
-  } catch (error) {
-    console.error(error.response?.data?.message);
-    alert(error.response?.data?.message);
-  }
-};
+      // clear password fields
+      setPasswordData({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setPasswordVerified(false);
+      setChangePassword(false);
+      alert("Profile updated successfully");
+
+    } catch (error) {
+      console.error(error.response?.data?.message);
+      alert(error.response?.data?.message);
+    }
+  };
 
   // 🔹 Delete Account
   const handleDelete = async () => {
@@ -107,7 +137,7 @@ const handleSave = async () => {
 
     try {
       await API.delete("/auth/profile", {
-       headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       localStorage.clear();
@@ -135,7 +165,7 @@ const handleSave = async () => {
           <button
             onClick={handleEdit}
             className="flex items-center gap-2 bg-blue-500 text-white px-3 py-1 rounded-lg"
-          > 
+          >
             <Pencil size={16} /> Edit
           </button>
         ) : (
@@ -161,7 +191,7 @@ const handleSave = async () => {
 
         {/* Name */}
         <div>
-          
+
           {isEditing ? (
             <input
               type="text"
@@ -177,7 +207,7 @@ const handleSave = async () => {
 
         {/* Email */}
         <div>
-          
+
           {isEditing ? (
             <input
               type="email"
@@ -190,44 +220,130 @@ const handleSave = async () => {
             <p className="text-gray-800 font-medium">{user.email}</p>
           )}
         </div>
-       <button
-  onClick={() => setChangePassword(!changePassword)}
-  className="text-blue-500"
->
-  Change Password
-</button>
-{changePassword && (
-  <div className="space-y-3 mt-4">
+        <button
+          onClick={() => setChangePassword(!changePassword)}
+          className="text-blue-500 font-medium"
+        >
+          Change Password
+        </button>
 
-    <input
-      type="password"
-      name="oldPassword"
-      placeholder="Old Password"
-      value={passwordData.oldPassword}
-      onChange={handlePasswordChange}
-      className="w-full border rounded-lg p-2"
-    />
+        {changePassword && (
+          <div className="space-y-4 mt-4 border rounded-2xl p-4 bg-gray-50">
 
-    <input
-      type="password"
-      name="newPassword"
-      placeholder="New Password"
-      value={passwordData.newPassword}
-      onChange={handlePasswordChange}
-      className="w-full border rounded-lg p-2"
-    />
+            {/* OLD PASSWORD */}
+            <div className="relative">
 
-    <input
-      type="password"
-      name="confirmPassword"
-      placeholder="Confirm Password"
-      value={passwordData.confirmPassword}
-      onChange={handlePasswordChange}
-      className="w-full border rounded-lg p-2"
-    />
+              <input
+                type={showPassword.oldPassword ? "text" : "password"}
+                name="oldPassword"
+                placeholder="Enter Previous Password"
+                value={passwordData.oldPassword}
+                onChange={handlePasswordChange}
+                className="w-full border rounded-lg p-2 pr-10"
+              />
 
-  </div>
-)}
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword({
+                    ...showPassword,
+                    oldPassword: !showPassword.oldPassword,
+                  })
+                }
+                className="absolute right-3 top-3 text-gray-500"
+              >
+                {showPassword.oldPassword ? (
+                  <EyeOff size={18} />
+                ) : (
+                  <Eye size={18} />
+                )}
+              </button>
+            </div>
+
+            {/* VERIFY BUTTON */}
+            {!passwordVerified && (
+              <button
+                onClick={verifyOldPassword}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Verify Password
+              </button>
+            )}
+
+            {/* SHOW ONLY AFTER PASSWORD VERIFIED */}
+            {passwordVerified && (
+              <>
+                {/* NEW PASSWORD */}
+                <div className="relative">
+
+                  <input
+                    type={showPassword.newPassword ? "text" : "password"}
+                    name="newPassword"
+                    placeholder="New Password"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full border rounded-lg p-2 pr-10"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword({
+                        ...showPassword,
+                        newPassword: !showPassword.newPassword,
+                      })
+                    }
+                    className="absolute right-3 top-3 text-gray-500"
+                  >
+                    {showPassword.newPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+
+                {/* CONFIRM PASSWORD */}
+                <div className="relative">
+
+                  <input
+                    type={showPassword.confirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full border rounded-lg p-2 pr-10"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword({
+                        ...showPassword,
+                        confirmPassword: !showPassword.confirmPassword,
+                      })
+                    }
+                    className="absolute right-3 top-3 text-gray-500"
+                  >
+                    {showPassword.confirmPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+
+                {/* SET PASSWORD BUTTON */}
+                <button
+                  onClick={handleSave}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Set Password
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
       </div>
 

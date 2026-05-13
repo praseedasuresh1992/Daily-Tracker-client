@@ -71,6 +71,13 @@ export default function Login() {
         <button type="button" className="w-full underline text-blue-500 bg-white mt-5 py-3 rounded-lg hover:bg-blue-600" onClick={handleRegister}>
           NewUser?
         </button>
+        <button
+          type="button"
+          onClick={() => navigate("/forgot-password")}
+          className="text-blue-500 text-sm mb-4 hover:underline"
+        >
+          Forgot Password?
+        </button>
       </form>
     </div>
   );

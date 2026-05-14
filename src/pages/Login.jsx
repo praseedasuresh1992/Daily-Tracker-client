@@ -17,7 +17,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("auth/login", form);
+      const res = await API.post("/auth/login", form);
       console.log(`res.data `, res.data)
 
       // Save token
@@ -68,13 +68,13 @@ export default function Login() {
         <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-blue-600">
           Login
         </button>
-        <button type="button" className="w-full underline text-blue-500 bg-white mt-5 py-3 rounded-lg hover:bg-blue-600" onClick={handleRegister}>
+        <button type="button" className="w-full underline text-blue-500 bg-white mt-5 py-3 rounded-lg " onClick={handleRegister}>
           NewUser?
         </button>
         <button
           type="button"
           onClick={() => navigate("/forgot-password")}
-          className="text-blue-500 text-sm mb-4 hover:underline"
+          className="text-red-500 text-sm mb-4 hover:underline"
         >
           Forgot Password?
         </button>

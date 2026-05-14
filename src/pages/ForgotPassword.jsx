@@ -13,6 +13,7 @@ export default function ForgotPassword() {
   const [otp, setOtp] = useState("");
 
   const [password, setPassword] = useState("");
+  console.log("welcome")
 
   // SEND OTP
   const handleSendOTP = async () => {
@@ -20,7 +21,7 @@ export default function ForgotPassword() {
     try {
 
       const res = await API.post(
-        "/auth/send-reset-otp",
+        "auth/send-reset-otp",
         { email }
       );
 
@@ -33,6 +34,9 @@ export default function ForgotPassword() {
       alert(error.response?.data?.message);
     }
   };
+  const handleLogin=()=>{
+    navigate("/login")
+  }
 
   // VERIFY OTP + RESET PASSWORD
   const handleResetPassword = async () => {
@@ -40,7 +44,7 @@ export default function ForgotPassword() {
     try {
 
       const res = await API.post(
-        "/auth/reset-password-otp",
+        "auth/reset-password-otp",
         {
           email,
           otp,
@@ -86,6 +90,10 @@ export default function ForgotPassword() {
             >
               Send OTP
             </button>
+            <button type="button" className="w-full text-green-500 bg-white mt-5 py-3  underline  hover:text-green-600" 
+            onClick={handleLogin}>
+          Want to login?
+        </button>
           </>
         )}
 
@@ -118,6 +126,7 @@ export default function ForgotPassword() {
             >
               Reset Password
             </button>
+            
           </>
         )}
       </div>

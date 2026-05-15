@@ -15,7 +15,7 @@ const Sidebar = () => {
   const profileUrl = user?.profile
     ? `${baseURL}/uploads/${user.profile}`
     : null;
-console.log(`Image ${profileUrl}`);
+  console.log(`Image ${profileUrl}`);
   const [open, setOpen] = useState({
     category: false,
     expense: false,
@@ -57,7 +57,7 @@ console.log(`Image ${profileUrl}`);
           )}
         </div>
 
-      
+
       </div>
 
       {/* 🔥 MENU */}
@@ -69,6 +69,14 @@ console.log(`Image ${profileUrl}`);
             className="flex justify-between items-center cursor-pointer font-semibold hover:text-blue-500"
           >
             👤 Profile
+          </Link>
+        </li>
+         <li>
+          <Link
+            to="/create-workspace"
+            className="flex justify-between items-center cursor-pointer font-semibold hover:text-blue-500"
+          >
+            Create a Workspace
           </Link>
         </li>
 

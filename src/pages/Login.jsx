@@ -25,6 +25,8 @@ export default function Login() {
 
       alert("Login successful");
       navigate("/dashboard");
+      console.log("navigate to dash");
+      
     } catch (err) {
       console.log(err)
       alert(err.response?.data?.message || "Error");

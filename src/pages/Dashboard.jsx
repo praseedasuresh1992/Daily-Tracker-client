@@ -10,6 +10,8 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const Dashboard = () => {
+  console.log("welcome to dash");
+  
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
@@ -28,138 +30,141 @@ const Dashboard = () => {
     try {
       const data = await getTasks();
       setTasks(data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
     }
-  };
+    catch (error) {
+      console.log(error.response);
+      console.log(error.response.data);
+    
+  } finally {
+    setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    fetchTasks();
-  }, [location.state]);
+useEffect(() => {
+  fetchTasks();
+}, [location.state]);
 
-  // 🔹 Default date
-  useEffect(() => {
-    const now = new Date();
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+// 🔹 Default date
+useEffect(() => {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    setFromDate(firstDay.toISOString().split("T")[0]);
-    setToDate(now.toISOString().split("T")[0]);
-  }, []);
+  setFromDate(firstDay.toISOString().split("T")[0]);
+  setToDate(now.toISOString().split("T")[0]);
+}, []);
 
-  // 🔥 Filtering
-  const filteredTasks = tasks.filter((task) => {
-    const taskDate = new Date(task.taskDate);
+// 🔥 Filtering
+const filteredTasks = tasks.filter((task) => {
+  const taskDate = new Date(task.taskDate);
 
-    if (fromDate && toDate) {
-      const start = new Date(fromDate);
-      const end = new Date(toDate);
-      end.setHours(23, 59, 59, 999);
+  if (fromDate && toDate) {
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+    end.setHours(23, 59, 59, 999);
 
-      if (taskDate < start || taskDate > end) return false;
-    }
+    if (taskDate < start || taskDate > end) return false;
+  }
 
-    if (filterStatus !== "all" && task.status !== filterStatus) {
-      return false;
-    }
+  if (filterStatus !== "all" && task.status !== filterStatus) {
+    return false;
+  }
 
-    return true;
+  return true;
+});
+
+// 🔹 Category aggregation
+const categoryData = filteredTasks.reduce((acc, task) => {
+  const category = task.category || "Other";
+  const amount = Number(task.amount) || 0;
+
+  const existing = acc.find((item) => item.name === category);
+
+  if (existing) {
+    existing.value += amount;
+  } else {
+    acc.push({ name: category, value: amount });
+  }
+
+  return acc;
+}, []);
+
+if (loading) return <Loader />;
+
+// ------------ CSV ------------
+const downloadCSV = () => {
+  if (filteredTasks.length === 0) {
+    alert("No data in selected range");
+    return;
+  }
+
+  const headers = ["Title", "Category", "Amount", "Status", "Date"];
+
+  const rows = filteredTasks.map((task) => [
+    task.title,
+    task.category,
+    task.amount,
+    task.status,
+    new Date(task.createdAt).toLocaleDateString(),
+  ]);
+
+  const csvContent =
+    "data:text/csv;charset=utf-8," +
+    [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+  const link = document.createElement("a");
+  link.href = encodeURI(csvContent);
+  link.download = "filtered_task_report.csv";
+  link.click();
+};
+
+// ------------ PDF ------------
+const downloadPDF = () => {
+  if (filteredTasks.length === 0) {
+    alert("No data in selected range");
+    return;
+  }
+
+  const doc = new jsPDF();
+
+  doc.text("Filtered Task Report", 14, 10);
+
+  const tableData = filteredTasks.map((task) => [
+    task.title,
+    task.category,
+    task.amount,
+    task.status,
+    new Date(task.createdAt).toLocaleDateString(),
+  ]);
+
+  autoTable(doc, {
+    head: [["Title", "Category", "Amount", "Status", "Date"]],
+    body: tableData,
   });
 
-  // 🔹 Category aggregation
-  const categoryData = filteredTasks.reduce((acc, task) => {
-    const category = task.category || "Other";
-    const amount = Number(task.amount) || 0;
+  doc.save("filtered_task_report.pdf");
+};
 
-    const existing = acc.find((item) => item.name === category);
-
-    if (existing) {
-      existing.value += amount;
-    } else {
-      acc.push({ name: category, value: amount });
-    }
-
-    return acc;
-  }, []);
-
-  if (loading) return <Loader />;
-
-  // ------------ CSV ------------
-  const downloadCSV = () => {
+// ------------ Email ------------
+const sendEmail = async () => {
+  try {
     if (filteredTasks.length === 0) {
-      alert("No data in selected range");
+      alert("No data to send");
       return;
     }
 
-    const headers = ["Title", "Category", "Amount", "Status", "Date"];
-
-    const rows = filteredTasks.map((task) => [
-      task.title,
-      task.category,
-      task.amount,
-      task.status,
-      new Date(task.createdAt).toLocaleDateString(),
-    ]);
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers, ...rows].map((e) => e.join(",")).join("\n");
-
-    const link = document.createElement("a");
-    link.href = encodeURI(csvContent);
-    link.download = "filtered_task_report.csv";
-    link.click();
-  };
-
-  // ------------ PDF ------------
-  const downloadPDF = () => {
-    if (filteredTasks.length === 0) {
-      alert("No data in selected range");
-      return;
-    }
-
-    const doc = new jsPDF();
-
-    doc.text("Filtered Task Report", 14, 10);
-
-    const tableData = filteredTasks.map((task) => [
-      task.title,
-      task.category,
-      task.amount,
-      task.status,
-      new Date(task.createdAt).toLocaleDateString(),
-    ]);
-
-    autoTable(doc, {
-      head: [["Title", "Category", "Amount", "Status", "Date"]],
-      body: tableData,
+    const res = await API.post("/send-report", {
+      tasks: filteredTasks,
+      email: user.email,
     });
 
-    doc.save("filtered_task_report.pdf");
-  };
+    alert(res.data.message);
+  } catch (err) {
+    console.log(err);
+    alert("Failed to send email");
+  }
+};
 
-  // ------------ Email ------------
-  const sendEmail = async () => {
-    try {
-      if (filteredTasks.length === 0) {
-        alert("No data to send");
-        return;
-      }
-
-      const res = await API.post("/send-report", {
-        tasks: filteredTasks,
-        email: user.email,
-      });
-
-      alert(res.data.message);
-    } catch (err) {
-      console.log(err);
-      alert("Failed to send email");
-    }
-  };
-
- return (
+return (
   <div className="space-y-6">
 
     {/* 🔥 EMPTY STATE */}
@@ -217,11 +222,10 @@ const Dashboard = () => {
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
-                  className={`px-4 py-2 rounded-full text-sm border transition ${
-                    filterStatus === status
+                  className={`px-4 py-2 rounded-full text-sm border transition ${filterStatus === status
                       ? "bg-black text-white"
                       : "bg-gray-100 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {status.toUpperCase()}
                 </button>

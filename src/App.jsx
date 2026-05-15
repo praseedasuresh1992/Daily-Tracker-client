@@ -16,6 +16,9 @@ import AddTask from "./pages/AddTask";
 import ProfilePage from "./pages/ProfilePage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import WorkspaceDetails from "./pages/WorkspaceDetails";
+import CreateWorkspace from "./pages/CreateWorkspace";
+import JoinWorkspace from "./pages/Joinworkspace";
 
 function App() {
   return (
@@ -43,8 +46,8 @@ function App() {
               <Route path="/expenses" element={<ProtectedRoute><AllExpenses /></ProtectedRoute>} />
               <Route path="/expenses/pending" element={<ProtectedRoute><PendingExpenses /></ProtectedRoute>} />
               <Route path="/expenses/history" element={<ProtectedRoute><ExpenseHistory /></ProtectedRoute>} />
-
-          
+              <Route path="/join/:inviteCode" element={<JoinWorkspace />}/>
+              <Route path="/create-workspace" element={<CreateWorkspace/>}/>
             </Route>
           </Route>
         </Routes>

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import API from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const [form, setForm] = useState({
     email: "",
     password: ""
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,7 +37,8 @@ export default function Login() {
 
   };
 
-  const handleRegister = () => {
+  
+const handleRegister = () => {
     navigate("/register")
   }
 
@@ -58,16 +61,25 @@ export default function Login() {
           onChange={handleChange}
           required
         />
+          
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
+          <div className="relative mb-6">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
           className="w-full mb-4 p-3 rounded-lg border border-gray-300 bg-white text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"          
-          onChange={handleChange}
-          required
-        />
+            required
+          />
 
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 cursor-pointer text-gray-600 dark:text-white"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+        </div>
         <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-blue-600 dark:bg-green-800 font-bold">
           Login
         </button>

@@ -7,7 +7,6 @@ import {
   deleteAttachment,
   addAttachment,
 } from "../services/taskService";
-
 const Expenses = ({ status }) => {
   const [expenses, setExpenses] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
@@ -217,6 +216,8 @@ const Expenses = ({ status }) => {
         <p>No Expenses Found</p>
       ) : (
         <div className="space-y-3">
+          console.log("Expenses.jsx rendering tasks:", expenses);
+          
           {expenses.map((expense) => (
             <TaskCard
               key={expense._id}

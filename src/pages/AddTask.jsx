@@ -144,8 +144,8 @@ await createTask(formData);
                   <input
                     type="radio"
                     name="category"
-                    value={cat.name}
-                    checked={form.category === cat.name}
+                    value={cat._id}
+                    checked={form.category === cat._id}
                     onChange={handleChange}
                   />
                   {cat.name}

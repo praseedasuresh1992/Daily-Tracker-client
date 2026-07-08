@@ -10,12 +10,27 @@ import {
 const Expenses = ({ status }) => {
   const [expenses, setExpenses] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
+const [currentPage, setCurrentPage] = useState(1);
+const expensesPerPage = 5;
 
   const selectionMode = selectedTasks.length > 0;
+useEffect(() => {
+  setCurrentPage(1);
+}, [status]);
 
   useEffect(() => {
     fetchExpenses();
   }, [status]);
+
+  useEffect(() => {
+  const totalPages = Math.ceil(
+    expenses.length / expensesPerPage
+  );
+
+  if (currentPage > totalPages && totalPages > 0) {
+    setCurrentPage(totalPages);
+  }
+}, [expenses, currentPage]);
 
   const fetchExpenses = async () => {
     try {
@@ -135,7 +150,20 @@ const Expenses = ({ status }) => {
       console.log(err);
     }
   };
+const indexOfLastExpense =
+  currentPage * expensesPerPage;
 
+const indexOfFirstExpense =
+  indexOfLastExpense - expensesPerPage;
+
+const currentExpenses = expenses.slice(
+  indexOfFirstExpense,
+  indexOfLastExpense
+);
+
+const totalPages = Math.ceil(
+  expenses.length / expensesPerPage
+);
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">
@@ -201,13 +229,13 @@ const Expenses = ({ status }) => {
             >
               Cancel
             </button>
-            <a
+            {/* <a
               href={`http://localhost:5000/uploads/${file.filePath}`}
               download={file.fileName}
               className="text-green-600"
             >
               Download
-            </a>
+            </a> */}
           </div>
         </div>
       )}
@@ -215,11 +243,11 @@ const Expenses = ({ status }) => {
       {expenses.length === 0 ? (
         <p>No Expenses Found</p>
       ) : (
+        <>
         <div className="space-y-3">
-          console.log("Expenses.jsx rendering tasks:", expenses);
           
-          {expenses.map((expense) => (
-            <TaskCard
+{currentExpenses.map((expense) => (         
+     <TaskCard
               key={expense._id}
               task={expense}
               selected={selectedTasks.includes(
@@ -240,9 +268,38 @@ const Expenses = ({ status }) => {
             />
           ))}
         </div>
-      )}
-    </div>
-  );
+        {expenses.length > expensesPerPage && (
+  <div className="flex justify-center items-center gap-4 mt-6">
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => prev - 1)
+      }
+      disabled={currentPage === 1}
+      className="px-4 py-2 bg-gray-300 rounded-lg disabled:opacity-50"
+    >
+      Previous Page
+    </button>
+
+    <span className="font-medium">
+      Page {currentPage} of {totalPages}
+    </span>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => prev + 1)
+      }
+      disabled={currentPage === totalPages}
+      className="px-4 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50"
+    >
+       Next Page
+        </button>
+      </div>
+    )}
+  </>
+)}
+</div>
+);
 };
+
 
 export default Expenses;

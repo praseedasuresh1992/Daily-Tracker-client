@@ -4,7 +4,7 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const CategoryPieChart = ({ data }) => {
   return (
-    <div className="bg-white p-4 rounded shadow">
+    <div className="bg-white p-4 rounded dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
       <h2 className="text-lg font-semibold mb-4">
         Category-wise Spending
       </h2>

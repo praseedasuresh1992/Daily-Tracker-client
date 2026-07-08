@@ -95,7 +95,7 @@ const Dashboard = () => {
 
   // 🔹 Category aggregation
   const categoryData = filteredTasks.reduce((acc, task) => {
-    const category = task.category || "Other";
+    const category = task.category?.name || "Other";
     const amount = Number(task.amount) || 0;
 
     const existing = acc.find((item) => item.name === category);
@@ -266,7 +266,7 @@ const Dashboard = () => {
         ) : (
           <>
             {/* Filter Section */}
-            <div className="sticky top-0 z-20 bg-gray-50 dark:bg-gray-900 pb-2">
+            <div className="z-20 bg-gray-50 dark:bg-gray-900 pb-2">
 
               <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-2xl shadow-sm flex flex-col gap-4">
 
@@ -419,15 +419,15 @@ const Dashboard = () => {
                 </h3>
 
                 <ResponsiveContainer
-                  width="50%"
-                  height={200}
+                  width="100%"
+                  height={300}
                 >
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
 
                     <XAxis dataKey="day" />
 
-                    <YAxis />
+                    <YAxis dataKey="completed" />
 
                     <Tooltip />
 
@@ -435,20 +435,18 @@ const Dashboard = () => {
                       type="monotone"
                       dataKey="completed"
                       stroke="#22c55e"
-                      strokeWidth={3}
+                      strokeWidth={2}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
 
               {/* Pie Chart */}
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-2xl shadow-sm">
+<div >
 
-                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white p-8">
-                  Category Breakdown
-                </h3>
+  
 
-                <div className="w-full h-[350px] flex items-center justify-center">
+  <div className="flex justify-center items-center h-[320px]">
                   <CategoryPieChart data={categoryData} />
                 </div>
               </div>

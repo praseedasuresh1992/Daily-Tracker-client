@@ -4,6 +4,7 @@ import { Download, FileText, X } from "lucide-react";
 const TaskCard = ({
   task,
   onToggleStatus,
+  onUpdate,
   onDelete,
   selected,
   selectionMode,
@@ -16,6 +17,13 @@ const TaskCard = ({
   const [loading, setLoading] = useState(false);
   const [previewFile, setPreviewFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    title: task.title,
+    description: task.description,
+    amount: task.amount,
+  });
+
 
   const handleToggle = async () => {
     try {
@@ -23,6 +31,25 @@ const TaskCard = ({
       await onToggleStatus(task._id);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
+    }
+
+    try {
+      await onUpdate(task._id, editData);
+      setIsEditing(false);
+      setEditData({
+        title: editData.title,
+        description: editData.description,
+        amount: editData.amount,
+      });
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -58,7 +85,7 @@ const TaskCard = ({
       await addAttachment(task._id, formData);
 
       onAttachmentDeleted(); // refresh list
-      
+
     } catch (err) {
       console.log(err);
       alert("Failed to upload attachment");
@@ -82,9 +109,10 @@ const TaskCard = ({
     }
   };
 
- const formattedDate = task.dueDate
-  ? new Date(task.dueDate).toLocaleDateString()
-  : "No date";
+
+  const formattedDate = task.taskDate
+    ? new Date(task.taskDate).toLocaleDateString()
+    : "No date";
 
   return (
     <>
@@ -110,47 +138,89 @@ const TaskCard = ({
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-            {task.title}
-          </h2>
+          {isEditing ? (
+            <input
+              value={editData.title}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) =>
+                setEditData({
+                  ...editData,
+                  title: e.target.value,
+                })
+              }
+              className="border rounded px-2 py-1 w-full"
+            />
+          ) : (
+            <h2 className="text-lg font-bold">
+              {task.title}
+            </h2>
+          )}
 
-          <span className="font-bold text-green-600 dark:text-green-400">
-            ₹{task.amount || 0}
+          {isEditing ? (
+            <input
+              type="number"
+              value={editData.amount}
+              onChange={(e) =>
+                setEditData({
+                  ...editData,
+                  amount: e.target.value,
+                })
+              }
+              className="border rounded px-2 py-1 w-24"
+            />
+          ) : (
+            <span>
+              ₹{task.amount || 0}
+            </span>
+          )}
+          <span
+            className={`px-4 py-2 text-sm rounded-lg font-medium transition ${task.status === "completed"
+              ? "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200"
+              : "bg-green-500 text-white hover:bg-green-600"
+              }`}
+          >
+            {task.status}
           </span>
-<span
- className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
-  task.status === "completed"
-    ? "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200"
-    : "bg-green-500 text-white hover:bg-green-600"
-}`}
->
-  {task.status}
-</span>
         </div>
 
         {/* Category + Date */}
         <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
-          <span>📂 {task.category || "No category"}</span>
+          <span>📂 {task.category?.name || "No category"}</span>
           <span>📅 {formattedDate}</span>
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-          {task.description || "No description provided"}
-        </p>
+        {isEditing ? (
+          <textarea
+            value={editData.description}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) =>
+              setEditData({
+                ...editData,
+                description: e.target.value,
+              })
+            }
+            className="border rounded p-2 w-full"
+            rows={3}
+          />
+        ) : (
+          <p>
+            {task.description || "No description"}
+          </p>
+        )}
 
         {/* Attachments */}
         {/* ------Adding attachment--------- */}
-       {/* ================= ATTACHMENTS ================= */}
+        {/* ================= ATTACHMENTS ================= */}
 
-<div className="pt-3 mt-3 border-t">
-  <div className="flex items-center justify-between mb-3">
-    <h4 className="font-medium text-sm dark:text-white">
-      Attachments
-    </h4>
+        <div className="pt-3 mt-3 border-t">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-medium text-sm dark:text-white">
+              Attachments
+            </h4>
 
-    <label
-      className="
+            <label
+              className="
         cursor-pointer
         px-3 py-1.5
         text-xs
@@ -161,86 +231,86 @@ const TaskCard = ({
         hover:bg-blue-700
         transition
       "
-    >
-      {uploading ? "Uploading..." : "➕ Add Attachment"}
+            >
+              {uploading ? "Uploading..." : "➕ Add Attachment"}
 
-      <input
-        type="file"
-        multiple
-        accept="image/*,.pdf"
-        className="hidden"
-        onChange={handleAddAttachment}
-      />
-    </label>
-  </div>
+              <input
+                type="file"
+                multiple
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={handleAddAttachment}
+              />
+            </label>
+          </div>
 
-  {task.attachments?.length > 0 ? (
-    <div className="space-y-2">
-      {task.attachments.map((file) => (
-        <div
-          key={file._id}
-          className="
+          {task.attachments?.length > 0 ? (
+            <div className="space-y-2">
+              {task.attachments.map((file) => (
+                <div
+                  key={file._id}
+                  className="
             flex items-center justify-between
             px-3 py-2
             rounded-lg
             bg-gray-100
             dark:bg-gray-700
           "
-        >
-          {/* File Name */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setPreviewFile(file);
-            }}
-            className="
+                >
+                  {/* File Name */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreviewFile(file);
+                    }}
+                    className="
               flex items-center gap-2
               text-sm
               text-blue-600
               hover:underline
               truncate
             "
-          >
-            <FileText size={16} />
-            {file.fileName}
-          </button>
+                  >
+                    <FileText size={16} />
+                    {file.fileName}
+                  </button>
 
-          {/* Delete */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
+                  {/* Delete */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
 
-              const confirmDelete =
-                window.confirm(
-                  `Are you sure you want to remove "${file.fileName}"?`
-                );
+                      const confirmDelete =
+                        window.confirm(
+                          `Are you sure you want to remove "${file.fileName}"?`
+                        );
 
-              if (!confirmDelete) return;
+                      if (!confirmDelete) return;
 
-              handleDeleteAttachment(
-                task._id,
-                file._id
-              );
-            }}
-            className="
+                      handleDeleteAttachment(
+                        task._id,
+                        file._id
+                      );
+                    }}
+                    className="
               text-red-500
               hover:text-red-700
               transition
             "
-          >
-            <X size={18} />
-          </button>
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No attachments
+            </p>
+          )}
         </div>
-      ))}
-    </div>
-  ) : (
-    <p className="text-sm text-gray-500 dark:text-gray-400">
-      No attachments
-    </p>
-  )}
-</div>
 
 
         {/* Actions */}
@@ -263,6 +333,16 @@ const TaskCard = ({
                 : "Mark Done"}
           </button>
 
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleUpdate();
+            }}
+            disabled={loading}
+            className="text-green-500 hover:text-green-700 text-sm font-medium"
+          >
+            {isEditing ? "Save" : "Update"}
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();

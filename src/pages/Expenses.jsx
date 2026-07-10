@@ -78,7 +78,16 @@ useEffect(() => {
   // Single Update
   // ======================
 
-  const handleUpdate = async (id) => {
+  const handleUpdate= async (id) => {
+    try {
+      await updateTask(id);
+      fetchExpenses();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUpdateStatus= async (id) => {
     try {
       await updateTask(id);
       fetchExpenses();
@@ -260,7 +269,8 @@ const totalPages = Math.ceil(
               onDoubleSelect={() =>
                 enterSelectionMode(expense._id)
               }
-              onToggleStatus={handleUpdate}
+              onToggleStatus={handleUpdateStatus}
+              onUpdate={handleUpdate}
               onDelete={handleDelete}
               deleteAttachment={deleteAttachment}
               onAttachmentDeleted={fetchExpenses}

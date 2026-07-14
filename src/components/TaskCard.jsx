@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Download, FileText, X } from "lucide-react";
 
 const TaskCard = ({
@@ -9,7 +9,7 @@ const TaskCard = ({
   selected,
   selectionMode,
   onSelect,
-  onDoubleSelect,
+  onDoubleSelect, 
   deleteAttachment,
   onAttachmentDeleted,
   addAttachment,
@@ -23,6 +23,15 @@ const TaskCard = ({
     description: task.description,
     amount: task.amount,
   });
+
+
+  useEffect(() => {
+  setEditData({
+    title: task.title,
+    description: task.description,
+    amount: task.amount,
+  });
+}, [task]);
 
 
   const handleToggle = async () => {

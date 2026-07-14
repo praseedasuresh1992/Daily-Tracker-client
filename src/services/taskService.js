@@ -1,4 +1,3 @@
-// src/services/taskService.js
 import API from "../utils/api";
 
 export const getTasks = async (status="all") => {
@@ -28,8 +27,16 @@ export const createTask = async (formData) => {
 };
 
 
-export const updateTask = async (id) => {
-  const res = await API.put(`/tasks/${id}`);
+export const updateTask = async (id,data) => {
+  const res = await API.put(`/tasks/update/${id}`,data);
+  return res.data;
+};
+
+export const updateTaskStatus = async (id) => {
+  const res = await API.patch(
+    `/tasks/${id}/status`
+  );
+
   return res.data;
 };
 

@@ -3,6 +3,7 @@ import TaskCard from "../components/TaskCard";
 import {
   getTasks,
   updateTask,
+  updateTaskStatus,
   deleteTask,
   deleteAttachment,
   addAttachment,
@@ -78,18 +79,22 @@ useEffect(() => {
   // Single Update
   // ======================
 
-  const handleUpdate= async (id) => {
-    try {
-      await updateTask(id);
-      fetchExpenses();
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const handleUpdate = async (id, data) => {
+  try {
+    const updatedTask = await updateTask(id, data);
+    setExpenses((prev) =>
+      prev.map((task) =>
+        task._id === id ? updatedTask : task
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const handleUpdateStatus= async (id) => {
     try {
-      await updateTask(id);
+      await updateTaskStatus(id);
       fetchExpenses();
     } catch (err) {
       console.log(err);

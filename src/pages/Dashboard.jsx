@@ -15,6 +15,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import TaskCalendar from "../components/TaskCalendar";
 
 
 import jsPDF from "jspdf";
@@ -92,6 +93,8 @@ const Dashboard = () => {
 
     return true;
   });
+
+
 
   // 🔹 Category aggregation
   const categoryData = filteredTasks.reduce((acc, task) => {
@@ -306,8 +309,8 @@ const Dashboard = () => {
                       key={status}
                       onClick={() => setFilterStatus(status)}
                       className={`px-4 py-2 rounded-full text-sm border transition ${filterStatus === status
-                          ? "bg-black dark:bg-blue-600 text-white border-transparent"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        ? "bg-black dark:bg-blue-600 text-white border-transparent"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
                         }`}
                     >
                       {status.toUpperCase()}
@@ -442,14 +445,16 @@ const Dashboard = () => {
               </div>
 
               {/* Pie Chart */}
-<div >
-
-  
-
-  <div className="flex justify-center items-center h-[320px]">
+              <div >
+                <div className="flex justify-center items-center h-[320px]">
                   <CategoryPieChart data={categoryData} />
                 </div>
               </div>
+
+              <div>
+                <TaskCalendar tasks={tasks} />
+              </div>
+              
             </div>
           </>
         )}

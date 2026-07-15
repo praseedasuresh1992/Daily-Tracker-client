@@ -34,7 +34,7 @@ export const updateTask = async (id,data) => {
 
 export const updateTaskStatus = async (id) => {
   const res = await API.patch(
-    `/tasks/${id}/status`
+    `/tasks/${id}`
   );
 
   return res.data;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import {
   getTasks,
@@ -180,13 +181,21 @@ const totalPages = Math.ceil(
 );
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">
-        {status === "pending"
-          ? "Pending Expenses"
-          : status === "done"
-            ? "Expense History"
-            : "All Expenses"}
-      </h2>
+      <div className="flex justify-between items-center mb-4">
+  <h2 className="text-xl font-bold">
+    {status === "pending"
+      ? "Pending Expenses"
+      : status === "done"
+      ? "Expense History"
+      : "All Expenses"}
+  </h2>
+
+  <Link
+    to="/board"
+    className=" px-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-700">
+    BoardView
+  </Link>
+</div>
 
       {/* Bulk Toolbar */}
 

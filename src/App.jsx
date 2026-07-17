@@ -23,6 +23,7 @@ import MyWorkspaces from "./pages/MyWorkspace";
 import WorkspaceAddTask from "./pages/WorkspaceAddTask";
 import MemberTasks from "./pages/MemberTasks";
 import AddWorkspaceCategory from "./pages/addWorkspaceCategory";
+import BoardView from "./pages/BoardView";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
               <Route path="/expenses" element={<AllExpenses />} />
               <Route path="/expenses/pending" element={<PendingExpenses />} />
               <Route path="/expenses/history" element={<ExpenseHistory />} />
+              <Route path="/board" element={<BoardView />}/>
               <Route path="/join-workspace" element={<JoinWorkspace />}/>
               <Route path="/create-workspace" element={<CreateWorkspace/>}/>
               <Route path="/workspaces" element={<MyWorkspaces />}/>

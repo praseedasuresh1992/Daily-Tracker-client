@@ -32,12 +32,16 @@ export const updateTask = async (id,data) => {
   return res.data;
 };
 
-export const updateTaskStatus = async (id) => {
-  const res = await API.patch(
-    `/tasks/${id}`
+export const updateTaskStatus = async (
+  id,
+  status
+) => {
+  const response = await API.patch(
+    `/tasks/${id}/status`,
+    { status }
   );
 
-  return res.data;
+  return response.data;
 };
 
 export const deleteTask = async (id) => {

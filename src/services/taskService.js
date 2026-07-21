@@ -26,6 +26,23 @@ export const createTask = async (formData) => {
   return res.data;
 };
 
+export const importTask=async (file)
+=>{
+const formData=new FormData();  
+
+formData.append("file",file);
+ const response=await API.post(
+  "/task/import",
+  formData,
+  {
+    headers : {
+      "content-type":
+      "multipart/form-data"
+    }
+  }
+ )
+ return response.data;
+}
 
 export const updateTask = async (id,data) => {
   const res = await API.put(`/tasks/update/${id}`,data);
